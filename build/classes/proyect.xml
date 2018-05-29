@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liverpool.sterling.sql.cebt" >
+    
+<!--   START  SELECTS -->
+
+    <select id="verificaUsuario" parameterType="com.liverpool.modelo.Usuario"  resultType="com.liverpool.modelo.Usuario">
+       <![CDATA[
+			SELECT 
+			    NOMBRE 				AS nombre,
+			    APELLIDO_PATERNO 	AS paterno,
+			    APELLIDO_MATERNO 	AS materno,
+			    ID_ROL 				AS userRol,
+			    ID_USUARIO 			AS idUsuario			
+			FROM CEBT_USUARIOS
+			WHERE CONTRASENIA = #{contraseña:VARCHAR} 
+			AND NOMBRE_USUARIO = #{username:VARCHAR}
+       ]]>
+    </select>
+    
+    
+     <select id="obtenerUsuarioPorID" parameterType="com.liverpool.modelo.Usuario"  resultType="com.liverpool.modelo.Usuario">
+       <![CDATA[
+			SELECT 
+			    NOMBRE 				AS nombre,
+			    APELLIDO_PATERNO 	AS paterno,
+			    APELLIDO_MATERNO 	AS materno,
+			    ID_ROL 				AS userRol,
+			    ID_USUARIO 			AS idUsuario,
+			    NOMBRE_USUARIO      AS username			
+			FROM CEBT_USUARIOS
+			WHERE ID_USUARIO = #{idUsuario:INTEGER} 
+       ]]>
+    </select>
+    
+    
+    <select id="moduloRol" parameterType="java.lang.Integer"  resultType="com.liverpool.modelo.Permisos">
+       <![CDATA[
+			SELECT 
+			    C.DESCRIPCION 		AS tipo,
+			    R.ID_ROL   			AS idRol,
+			    R.ID_MODULO			AS idModulo,
+			    M.DESCRIPCION		AS descripcion 
+			FROM CEBT_ROLES C
+			INNER JOIN CEBT_MODULOS_ROLES R ON R.ID_ROL = C.ID_ROL
+			INNER JOIN CEBT_MODULOS M ON M.ID_MODULO = R.ID_MODULO
+			WHERE C.ID_ROL = #{idRol:NUMERIC}
+       ]]>
+    </select>
+    
+    <select id="obtenerCentrosDistibucion" parameterType="java.lang.String"  resultType="com.liverpool.modelo.CentroDistribucion">
+       <![CDATA[
+			SELECT
+			    ID_CENTRO_DE_DIST 		AS idCentro,
+			    NOMBRE 					AS nombre,
+			    PZAS_DEFAULT 			AS cantidadMaximaPiezas
+			FROM CEBT_CDIST
+       ]]>
+    </select>
+    
+     <select id="obtenerCentroDistibucion" parameterType="java.lang.String"  resultType="com.liverpool.modelo.CentroDistribucion">
+       <![CDATA[
+			SELECT
+			    ID_CENTRO_DE_DIST 		AS idCentro,
+			    NOMBRE 					AS nombre,
+			    PZAS_DEFAULT 			AS cantidadMaximaPiezas
+			FROM CEBT_CDIST
+			WHERE ID_CENTRO_DE_DIST =#{idCentro:NUMERIC}
+       ]]>
+    </select>
+    
+    <select id="cantidadCitada" parameterType="com.liverpool.modelo.Pedidos"  resultType="com.liverpool.modelo.Pedidos">
+       <![CDATA[
+ 			SELECT 
+ 				NUM_PEDIDO				AS numeroPedido,
+ 				SKU						AS sku,
+ 				NUM_PIEZAS				AS numPiezas
+			FROM DETALLE_CITAS  
+ 			WHERE num_pedido=#{numeroPedido:NUMERIC}
+			AND NUM_PROVEEDOR=#{numeroProveedor:NUMERIC} 
+ 			AND sku= #{sku:NUMERIC} 
+ 			AND STATUS != 4
+        ]]>
+    </select>
+    
+    <select id="obtenerTodoLosUsuariosPorCentro" parameterType="com.liverpool.modelo.Usuario"  resultType="com.liverpool.modelo.Usuario">
+       <![CDATA[
+ 			SELECT  
+			    USR.ID_USUARIO          AS      idUsuario,
+			    USR.ID_ROL              AS      userRol,
+                ROL.DESCRIPCION         AS      usrRolDescripcion,
+			    USR.NOMBRE              AS      nombre,
+			    USR.APELLIDO_PATERNO    AS      aPaterno,
+			    USR.APELLIDO_MATERNO    AS      aMaterno,
+			    USR.CONTRASENIA         AS      contraseña,
+			    USR.NOMBRE_USUARIO      AS      username,
+                TRIM( TRIM(NOMBRE) || ' ' || TRIM(APELLIDO_PATERNO) || ' ' || TRIM(APELLIDO_Materno)) AS strName
+			FROM CEBT_USUARIOS USR
+            INNER JOIN CEBT_ROLES ROL ON ROL.ID_ROL = USR.ID_ROL
+        ]]>
+    </select>
+    
+    <select id="filtroNombreNombre" parameterType="com.liverpool.modelo.Usuario"  resultType="com.liverpool.modelo.Usuario">
+       <![CDATA[
+ 			SELECT  
+			    USR.ID_USUARIO          AS      idUsuario,
+			    USR.ID_ROL              AS      userRol,
+                ROL.DESCRIPCION         AS      usrRolDescripcion,
+			    USR.NOMBRE              AS      nombre,
+			    USR.APELLIDO_PATERNO    AS      aPaterno,
+			    USR.APELLIDO_MATERNO    AS      aMaterno,
+			    USR.CONTRASENIA         AS      contraseña,
+			    USR.NOMBRE_USUARIO      AS      username,
+                TRIM( TRIM(NOMBRE) || ' ' || TRIM(APELLIDO_PATERNO) || ' ' || TRIM(APELLIDO_Materno)) AS strName
+			FROM       CEBT_USUARIOS USR
+			INNER JOIN CEBT_ROLES ROL ON ROL.ID_ROL = USR.ID_ROL
+			WHERE  USR.NOMBRE like CONCAT(CONCAT('%',#{nombre:VARCHAR}),'%')
+        ]]>
+    </select>
+    
+    <select id="filtroNombreApaterno" parameterType="com.liverpool.modelo.Usuario"  resultType="com.liverpool.modelo.Usuario">
+       <![CDATA[
+ 			SELECT  
+			    USR.ID_USUARIO          AS      idUsuario,
+			    USR.ID_ROL              AS      userRol,
+                ROL.DESCRIPCION         AS      usrRolDescripcion,
+			    USR.NOMBRE              AS      nombre,
+			    USR.APELLIDO_PATERNO    AS      aPaterno,
+			    USR.APELLIDO_MATERNO    AS      aMaterno,
+			    USR.CONTRASENIA         AS      contraseña,
+			    USR.NOMBRE_USUARIO      AS      username,
+                TRIM( TRIM(NOMBRE) || ' ' || TRIM(APELLIDO_PATERNO) || ' ' || TRIM(APELLIDO_Materno)) AS strName
+			FROM       CEBT_USUARIOS USR
+			INNER JOIN CEBT_ROLES ROL ON ROL.ID_ROL = USR.ID_ROL
+			WHERE  USR.APELLIDO_PATERNO like CONCAT(CONCAT('%',#{paterno:VARCHAR}),'%')
+        ]]>
+    </select>
+    
+    <select id="filtroNombreAmaterno" parameterType="com.liverpool.modelo.Usuario"  resultType="com.liverpool.modelo.Usuario">
+       <![CDATA[
+ 			SELECT  
+			    USR.ID_USUARIO          AS      idUsuario,
+			    USR.ID_ROL              AS      userRol,
+                ROL.DESCRIPCION         AS      usrRolDescripcion,
+			    USR.NOMBRE              AS      nombre,
+			    USR.APELLIDO_PATERNO    AS      aPaterno,
+			    USR.APELLIDO_MATERNO    AS      aMaterno,
+			    USR.CONTRASENIA         AS      contraseña,
+			    USR.NOMBRE_USUARIO      AS      username,
+                TRIM( TRIM(NOMBRE) || ' ' || TRIM(APELLIDO_PATERNO) || ' ' || TRIM(APELLIDO_Materno)) AS strName
+			FROM       CEBT_USUARIOS USR
+			INNER JOIN CEBT_ROLES ROL ON ROL.ID_ROL = USR.ID_ROL
+			WHERE USR.APELLIDO_MATERNO like CONCAT(CONCAT('%',#{materno:VARCHAR}),'%')
+        ]]>
+    </select>
+    
+    <select id="filtroNombreNombreApaterno" parameterType="com.liverpool.modelo.Usuario"  resultType="com.liverpool.modelo.Usuario">
+       <![CDATA[
+ 			SELECT  
+			    USR.ID_USUARIO          AS      idUsuario,
+			    USR.ID_ROL              AS      userRol,
+                ROL.DESCRIPCION         AS      usrRolDescripcion,
+			    USR.NOMBRE              AS      nombre,
+			    USR.APELLIDO_PATERNO    AS      aPaterno,
+			    USR.APELLIDO_MATERNO    AS      aMaterno,
+			    USR.CONTRASENIA         AS      contraseña,
+			    USR.NOMBRE_USUARIO      AS      username,
+                TRIM( TRIM(NOMBRE) || ' ' || TRIM(APELLIDO_PATERNO) || ' ' || TRIM(APELLIDO_Materno)) AS strName
+			FROM       CEBT_USUARIOS USR
+			INNER JOIN CEBT_ROLES ROL ON ROL.ID_ROL = USR.ID_ROL
+			WHERE USR.USR.NOMBRE 		like CONCAT(CONCAT('%',#{nombre:VARCHAR}),'%')
+			and USR.APELLIDO_PATERNO 	like CONCAT(CONCAT('%',#{paterno:VARCHAR}),'%')
+        ]]>
+    </select>
+    
+    <select id="filtroNombreNombreAmaterno" parameterType="com.liverpool.modelo.Usuario"  resultType="com.liverpool.modelo.Usuario">
+       <![CDATA[
+ 			SELECT  
+			    USR.ID_USUARIO          AS      idUsuario,
+			    USR.ID_ROL              AS      userRol,
+                ROL.DESCRIPCION         AS      usrRolDescripcion,
+			    USR.NOMBRE              AS      nombre,
+			    USR.APELLIDO_PATERNO    AS      aPaterno,
+			    USR.APELLIDO_MATERNO    AS      aMaterno,
+			    USR.CONTRASENIA         AS      contraseña,
+			    USR.NOMBRE_USUARIO      AS      username,
+                TRIM( TRIM(NOMBRE) || ' ' || TRIM(APELLIDO_PATERNO) || ' ' || TRIM(APELLIDO_Materno)) AS strName
+			FROM       CEBT_USUARIOS USR
+			INNER JOIN CEBT_ROLES ROL ON ROL.ID_ROL = USR.ID_ROL
+			WHERE USR.NOMBRE 			like CONCAT(CONCAT('%',#{nombre:VARCHAR}),'%')
+			and USR.APELLIDO_MATERNO 	like CONCAT(CONCAT('%',#{materno:VARCHAR}),'%')
+        ]]>
+    </select>
+    
+    <select id="filtroNombrePaternoAmaterno" parameterType="com.liverpool.modelo.Usuario"  resultType="com.liverpool.modelo.Usuario">
+       <![CDATA[
+ 			SELECT  
+			    USR.ID_USUARIO          AS      idUsuario,
+			    USR.ID_ROL              AS      userRol,
+                ROL.DESCRIPCION         AS      usrRolDescripcion,
+			    USR.NOMBRE              AS      nombre,
+			    USR.APELLIDO_PATERNO    AS      aPaterno,
+			    USR.APELLIDO_MATERNO    AS      aMaterno,
+			    USR.CONTRASENIA         AS      contraseña,
+			    USR.NOMBRE_USUARIO      AS      username,
+                TRIM( TRIM(NOMBRE) || ' ' || TRIM(APELLIDO_PATERNO) || ' ' || TRIM(APELLIDO_Materno)) AS strName
+			FROM       CEBT_USUARIOS USR
+			INNER JOIN CEBT_ROLES ROL ON ROL.ID_ROL = USR.ID_ROL
+			WHERE USR.APELLIDO_PATERNO 		like CONCAT(CONCAT('%',#{paterno:VARCHAR}),'%')
+			and USR.APELLIDO_MATERNO 		like CONCAT(CONCAT('%',#{materno:VARCHAR}),'%')
+        ]]>
+    </select>
+    
+    <select id="filtroNombreFull" parameterType="com.liverpool.modelo.Usuario"  resultType="com.liverpool.modelo.Usuario">
+       <![CDATA[
+ 			SELECT  
+			    USR.ID_USUARIO          AS      idUsuario,
+			    USR.ID_ROL              AS      userRol,
+                ROL.DESCRIPCION         AS      usrRolDescripcion,
+			    USR.NOMBRE              AS      nombre,
+			    USR.APELLIDO_PATERNO    AS      aPaterno,
+			    USR.APELLIDO_MATERNO    AS      aMaterno,
+			    USR.CONTRASENIA         AS      contraseña,
+			    USR.NOMBRE_USUARIO      AS      username,
+                TRIM( TRIM(NOMBRE) || ' ' || TRIM(APELLIDO_PATERNO) || ' ' || TRIM(APELLIDO_Materno)) AS strName
+			FROM       CEBT_USUARIOS USR
+			INNER JOIN CEBT_ROLES ROL ON ROL.ID_ROL = USR.ID_ROL
+			WHERE USR.NOMBRE 				like CONCAT(CONCAT('%',#{nombre:VARCHAR}),'%')
+			and USR.APELLIDO_PATERNO 		like CONCAT(CONCAT('%',#{paterno:VARCHAR}),'%')
+			and USR.APELLIDO_MATERNO 		like CONCAT(CONCAT('%',#{materno:VARCHAR}),'%')
+        ]]>
+    </select>
+    
+    
+    <select id="filtroUser" parameterType="com.liverpool.modelo.Usuario"  resultType="com.liverpool.modelo.Usuario">
+       <![CDATA[
+ 			SELECT  
+			    USR.ID_USUARIO          AS      idUsuario,
+			    USR.ID_ROL              AS      userRol,
+                ROL.DESCRIPCION         AS      usrRolDescripcion,
+			    USR.NOMBRE              AS      nombre,
+			    USR.APELLIDO_PATERNO    AS      aPaterno,
+			    USR.APELLIDO_MATERNO    AS      aMaterno,
+			    USR.CONTRASENIA         AS      contraseña,
+			    USR.NOMBRE_USUARIO      AS      username,
+                TRIM( TRIM(NOMBRE) || ' ' || TRIM(APELLIDO_PATERNO) || ' ' || TRIM(APELLIDO_Materno)) AS strName
+			FROM       CEBT_USUARIOS USR
+			INNER JOIN CEBT_ROLES ROL ON ROL.ID_ROL = USR.ID_ROL
+			WHERE USR.NOMBRE_USUARIO		= #{username:VARCHAR}
+        ]]>
+    </select>
+    
+    
+    <select id="filtroTipoUser" parameterType="com.liverpool.modelo.Usuario"  resultType="com.liverpool.modelo.Usuario">
+       <![CDATA[
+ 			SELECT  
+			    USR.ID_USUARIO          AS      idUsuario,
+			    USR.ID_ROL              AS      userRol,
+                ROL.DESCRIPCION         AS      usrRolDescripcion,
+			    USR.NOMBRE              AS      nombre,
+			    USR.APELLIDO_PATERNO    AS      aPaterno,
+			    USR.APELLIDO_MATERNO    AS      aMaterno,
+			    USR.CONTRASENIA         AS      contraseña,
+			    USR.NOMBRE_USUARIO      AS      username,
+                TRIM( TRIM(NOMBRE) || ' ' || TRIM(APELLIDO_PATERNO) || ' ' || TRIM(APELLIDO_Materno)) AS strName
+			FROM       CEBT_USUARIOS USR
+			INNER JOIN CEBT_ROLES ROL ON ROL.ID_ROL = USR.ID_ROL
+			WHERE USR.ID_ROL = #{userRol:INTEGER}
+        ]]>
+    </select>
+    
+</mapper> 

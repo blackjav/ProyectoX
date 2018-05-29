@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+    <constant name="struts.devMode" value="true" />
+    <constant name="struts.configuration.xml.reload" value="true" />
+    <constant name="struts.multipart.maxSize" value="10000000" />
+    <constant name="struts.multipart.saveDir" value="multipart"/>
+  
+    <package name="default"  extends="struts-default" namespace="/">
+    	<default-action-ref name="home" />
+    	
+    	<action name="home">
+    		<result type="redirect">/jsp/login.jsp</result>
+ 		 </action>
+  
+		<action name="login" class="com.liverpool.cebt.actions.LoginAction" method="validaUsuario">
+		</action>
+		
+		<action name="login" class="com.liverpool.cebt.actions.OrderCreatedAction" method="initialLoad">
+		</action>
+		
+		
+		
+		
+	</package>
+
+</struts>
